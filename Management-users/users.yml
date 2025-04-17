@@ -1,0 +1,68 @@
+---
+ - name: Management users 
+   hosts: all
+   become: true
+   vars_files: 
+     - user-list.yml
+     - vault.yml 
+   tasks:
+    - name: create a group opsdev
+      group: 
+        name: opsdev
+        satte: present 
+      when: inventory_hostname in groups['dev'] and inventory_hostname in groups['test'] 
+    - name : create users
+      user: 
+       name: "{{item.name}}"
+       uid: "{{item.uid}}"
+       password: "pw_manager | password_hash('sha512')" 
+       password_expire_days: "{{item.password_expire_days}}"   
+      when: 
+        - inventory_hostname in groups['dev']
+        - item.job == 'developer'
+      loop:
+        "{{users}}"  
+    - name: create a group opsmgr   
+      group: 
+        name: opsmgr
+        state: present 
+      when: inventory_hostname in groups['test'] and inventory_hostname ['manager']
+    - name: create user in group opsmgr 
+      user: 
+       name: "{{item.name}}"
+       uid: "{{item.uid}}" 
+       password: "pw_manager | password_hash('sha512')"
+       password_expire_days: "{{ite.password_expire_days}}"
+      when: 
+       - inventory_hostname in groups['dev'] and inventory_hostname in groups['manager']  
+       - item.job=='manager' 
+      loop:
+        "{{users}}" 
+
+#✅ Tasks to implement:
+        #Create a group named opsdev
+        
+        #Only on hosts that are part of both dev and test inventory groups.
+        
+        #Create users from the list defined in user-list.yml
+        
+        #Only on hosts in the dev group.
+        
+        #Only if the user’s job is developer.
+        
+        #Each user must have:
+              
+                #A specific uid
+                 #A hashed password stored securely using pw_manager from vault.yml     
+                 #A password expiration policy based on password_expire_days
+        #Create a group named opsmgr
+        #Only on hosts that belong to the test group and are listed as manager.
+        #Create manager users from the list
+        #Only on hosts that are part of both dev and manager groups.
+        #Only if the user’s job is manager.
+        #Each user must have:
+            #A specific uid
+            #A hashed password
+            #A password expiration policy
+        
+ #(In general, this is the most difficult example in the exam regarding the chapter on User Management. if u do it u are good)       
