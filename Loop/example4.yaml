@@ -1,0 +1,13 @@
+- name: Add multiple SSH keys for users
+  authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ item.1 }}"
+  with_subelements:
+    - 
+      - { name: 'user1', keys: ['key1', 'key2'] }
+      - { name: 'user2', keys: ['key3'] }
+    - keys
+
+
+# Add multiple ssh keys using loop and dictionnary 
+#how to loop  a dictionnary 

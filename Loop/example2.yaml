@@ -1,0 +1,15 @@
+- name: Create multiple files
+  hosts: all
+  become: true
+  tasks:
+    - name: Touch files
+      file:
+        path: "/tmp/{{ item }}"
+        state: touch
+      loop:
+        - file1.txt
+        - file2.txt
+        - file3.txt
+
+
+#Create multiple files using loop 
