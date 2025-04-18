@@ -1,0 +1,24 @@
+---
+ - name : installation pkgs 
+   hosts: all 
+   become: true 
+   vars: 
+    - pkgs:
+       - mariadb
+       - apache
+   tasks:
+    - name: install pkgs 
+      yum: 
+       name: "{{item.name}}"
+       state: present
+      loop:
+       "{{pkgs}}"
+    - name: installation developemetn tool
+      yum:
+       name: '@ RPM Developement Tool  '  
+       state: present
+    - name: update all the packages
+      yum:
+       name: "*"
+       state: latest 
+       

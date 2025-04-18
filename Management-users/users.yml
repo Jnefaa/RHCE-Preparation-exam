@@ -66,3 +66,4 @@
             #A password expiration policy
         
  #(In general, this is the most difficult example in the exam regarding the chapter on User Management. if u do it u are good)       
+ #tips of course you should to make user-list.yml and vault.yml under the this directory /home/yourprofile/ansible/ 
