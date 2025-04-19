@@ -1,0 +1,24 @@
+---
+- name: install httpd package
+  yum:
+   name: https
+   state: present
+- name: enable the service httpd
+  service: 
+  name: httpd
+  state: enabled
+- name: enable firewalld
+  firewalld: 
+  name: https
+  permanent: true
+  state: enabled
+- name: create the index.html
+  templeate:
+   src: index.html.j2
+   dest: /var/www/indexhtml
+    
+
+
+
+
+# this file should be under this directory  /roles/tasks
