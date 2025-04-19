@@ -1,0 +1,12 @@
+---
+- name: Configuration Selinux 
+  hosts: all
+  vars: 
+    selinux_state: enforcing 
+  roles:
+   - /usr/share/ansible/roles/rheel-system-roles.selinux
+  when: inventory_hostname in groups['dev'] and inventory_hostname in groups['prod']
+
+#in this example we use the role system selinux to configure the selinux 
+#first you need to install the roles  using this command sudo  yum install rheel-system-roles
+#then create a playbook and call the role in your playbook  like this example you can use when to target the exact host using when: inventory_hostname in groups['test']
