@@ -1,0 +1,85 @@
+---
+ - name: white test 
+   hosts: all
+   become: true 
+   vars: 
+    pkgs:
+     - mariadb
+     - php
+   tasks: 
+    - name : configure repository 
+      yum_repository:
+        name: baseos
+        baseurl: http://classroom.example.com/content/rhel8.0/x86_64/dvd/BaseOS/
+        description: Base OS Repo
+        gpgcheck: yes
+        enabled: yes
+        key: http://classroom.example.com/content/rhel8.0/x86_64/dvd/RPM-GPG-KEY-redhat-release
+        name: appstream
+    - name: appsterm 
+      yum_repository: 
+         baseurl: http://classroom.example.com/content/rhel8.0/x86_64/dvd/AppStream/
+         description:Appstrean Repo
+         gpgcheck: yes
+         enabled: yes 
+         key: http://classroom.example.com/content/rhel8.0/x86_64/dvd/RPM-GPG-KEY-redhat-release
+    - name: install packages 
+      yum:
+       name: "{{item}}"
+       state: present
+      when: inventory_hostname in groups['dev'] and inventory_hostname in groups['test']
+      loop:
+       "{{pkgs}}"
+    - name: install  developement tools
+      yum: 
+       name: '@RPM Developement TOOLS'
+       state: present
+    - name: update all the packages
+      yum:
+       name: '*'
+       state: latest
+    - name:  configure    timesynt_ntp_servers
+      vars: 
+       - timesync_ntp_servers: 172.185.12.23
+         iburst: yes
+      roles:
+       - timesync
+    - name: https install  
+      yum: 
+       name: httpd
+       state: present
+    - name:  httpd enabled 
+      service: 
+       name: httpd
+       state: started
+       enabled: yes
+    - name: firewalld 
+      firewalld: 
+       name: httpd 
+       permanent: true 
+       enabled: yes
+    - name: create a index html
+      templeate:
+       - src : index.html.j2
+       - dest: /www/var/  
+    - name: call the roles  
+      hosts: all
+      role:
+       - apacche 
+    - name: management file 
+      file:
+       src: /webdev
+       dest: /www/var/hrml/
+       path: /webdev
+       group: webdev   
+       mode:775 
+       state:link
+      
+##in index.html.j2 
+ #write this : welcome on "{{ansible_facts['fqdn']}}" on "{{ansible_facts['address']['default']}}"
+# what we write it is a paybook now y need to  create the playbook using this role
+   
+#ansible-galaxy collection install -r /ansible/requirement.yml -p /home/devops/ansible/collections
+
+    
+   
